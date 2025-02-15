@@ -10,6 +10,8 @@ import AddMoviePage from "../pages/AdminTemplate/AddMovie"
 import AuthPage from "../pages/AdminTemplate/AuthPage"
 import PageNotFound from "../pages/PageNotFound"
 import DetaiMovie from "../pages/HomeTemplate/DetailMovie";
+import Register from "../pages/HomeTemplate/Register";
+import Login from "../pages/HomeTemplate/Login";
 const routes = [
     {
         path: "",
@@ -26,6 +28,14 @@ const routes = [
             {
                 path: "detail/:id",
                 element: DetaiMovie,
+            },
+            {
+                path: "register",
+                element: Register,
+            },
+            {
+                path: "login",
+                element: Login,
             },
         ],
     },

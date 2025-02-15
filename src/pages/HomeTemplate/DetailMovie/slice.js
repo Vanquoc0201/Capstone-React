@@ -5,9 +5,6 @@ export const fetchDetailMovie = createAsyncThunk(
     async (id, { rejectWithValue }) => {
       try {
         const result = await api.get(`/QuanLyPhim/LayThongTinPhim?MaPhim=${id}`);
-        
-        console.log("API Full Response:", result.data); // Kiểm tra API trả về
-        console.log("API Content:", result.data.content);
   
         if (!result.data) {
           throw new Error("No data received from API");

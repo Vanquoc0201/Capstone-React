@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../../services/api";
 import { createSelector } from "reselect";
+
 const selectMovieState = (state) => state.listMovieReducer;
+
 // Async action để lấy danh sách phim
 export const fetchListMovie = createAsyncThunk(
   "listMoviePage/fetchListMovie",
@@ -19,7 +21,8 @@ const initialState = {
   loading: false,
   data: null,
   error: null,
-  selectedFilter: "all", // Thêm state để lưu filter
+  selectedFilter: "all", // Lưu filter
+  selectedMovie: null,   // Lưu bộ phim đang chọn
 };
 
 const listMoviePageSlice = createSlice({
@@ -29,38 +32,43 @@ const listMoviePageSlice = createSlice({
     setFilter: (state, action) => {
       state.selectedFilter = action.payload;
     },
+    setSelectedMovie: (state, action) => {
+      state.selectedMovie = action.payload;
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchListMovie.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(fetchListMovie.fulfilled, (state, action) => {
-      state.loading = false;
-      state.data = action.payload;
-    });
-    builder.addCase(fetchListMovie.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    });
+    builder
+      .addCase(fetchListMovie.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchListMovie.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchListMovie.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
 // Selector để lấy danh sách phim đã lọc
 export const selectFilteredMovies = createSelector(
-    [selectMovieState],
-    (movieState) => {
-      const { data, selectedFilter } = movieState;
-      if (!data) return [];
-  
-      return data.filter((movie) => {
-        if (selectedFilter === "all") return true;
-        if (selectedFilter === "dangChieu") return movie.dangChieu;
-        if (selectedFilter === "sapChieu") return movie.sapChieu;
-        if (selectedFilter === "hot") return movie.hot;
-        return false;
-      });
-    }
-  );
+  [selectMovieState],
+  (movieState) => {
+    const { data, selectedFilter } = movieState;
+    if (!data || data.length === 0) return [];
 
-export const { setFilter } = listMoviePageSlice.actions;
+    return data.filter((movie) => {
+      switch (selectedFilter) {
+        case "dangChieu": return movie.dangChieu;
+        case "sapChieu": return movie.sapChieu;
+        case "hot": return movie.hot;
+        default: return true;
+      }
+    });
+  }
+);
+
+export const { setFilter, setSelectedMovie } = listMoviePageSlice.actions;
 export default listMoviePageSlice.reducer;

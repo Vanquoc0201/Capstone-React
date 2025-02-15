@@ -1,8 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import Movie from "./movie";
 import { fetchListMovie, setFilter, selectFilteredMovies } from "./slice";
-import { fetchCinemaSystems, fetchCinemaClusters, setSelectedSystem } from "./cinemaSlice";
+import CinemaSelection from "./cinema";
+import { fetchCinemaSystems, fetchCinemasAndShowtimes, resetCinemaSelection } from "./cinemaSlice";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -11,31 +12,57 @@ import "swiper/css/pagination";
 
 export default function HomePage() {
   const dispatch = useDispatch();
-  
-  const { loading: loadingMovies } = useSelector((state) => state.listMovieReducer);
+
+  // Lấy danh sách phim & bộ lọc từ Redux
+  const { loading: loadingMovies, selectedFilter } = useSelector(
+    (state) => state.listMovieReducer
+  );
   const filteredMovies = useSelector(selectFilteredMovies);
-  const selectedFilter = useSelector((state) => state.listMovieReducer.selectedFilter);
 
-  const { cinemaSystems, cinemaClusters, selectedSystem, loading: loadingCinemas } = useSelector((state) => state.cinemaReducer);
-
-  // Chỉ fetch dữ liệu khi component mount
+  // Lấy danh sách rạp từ Redux
+  const {
+    cinemaSystems = [],
+    cinemaClusters = [],
+    selectedSystem,
+    selectedCluster,
+    showtimes,
+    loading: loadingCinemas,
+  } = useSelector((state) => state.cinemaReducer || {});
+  
   useEffect(() => {
+    // Reset hệ thống rạp trước khi fetch dữ liệu
+    dispatch(resetCinemaSelection());
+  
+    // Sau khi reset, gọi API lấy danh sách phim & hệ thống rạp
     dispatch(fetchListMovie());
     dispatch(fetchCinemaSystems());
   }, [dispatch]);
-
-  // Dùng useRef để tránh re-render nếu chọn cùng một hệ thống rạp
-  const selectedSystemRef = useRef(null);
-  const handleSelectSystem = (maHeThongRap) => {
-    if (selectedSystemRef.current !== maHeThongRap) {
-      selectedSystemRef.current = maHeThongRap;
-      dispatch(setSelectedSystem(maHeThongRap));
-      dispatch(fetchCinemaClusters(maHeThongRap));
+  
+  // Gọi API suất chiếu khi cụm rạp thay đổi
+  useEffect(() => {
+    if (selectedCluster) {
+      dispatch(fetchCinemasAndShowtimes(selectedCluster));
     }
-  };
+  }, [selectedCluster, dispatch]);
 
-  // Ghi nhớ danh sách cụm rạp, tránh render lại
-  const memoizedClusters = useMemo(() => cinemaClusters, [cinemaClusters]);
+  // Lọc danh sách cụm rạp theo hệ thống rạp được chọn
+  const filteredClusters = useMemo(() => {
+    if (!selectedSystem || !cinemaClusters.length) return [];
+    return cinemaClusters.filter(
+      (cluster) => cluster.maHeThongRap === selectedSystem
+    );
+  }, [cinemaClusters, selectedSystem]);
+
+  // Danh sách bộ lọc phim
+  const filters = useMemo(
+    () => [
+      { key: "all", label: "🎥 Tất cả" },
+      { key: "dangChieu", label: "🎬 Đang chiếu" },
+      { key: "sapChieu", label: "⏳ Sắp chiếu" },
+      { key: "hot", label: "🔥 Phim HOT" },
+    ],
+    []
+  );
 
   return (
     <div className="container mx-auto mt-5">
@@ -51,41 +78,45 @@ export default function HomePage() {
           loop
           className="rounded-lg shadow-lg"
         >
-          {filteredMovies.slice(0, 10).map((movie) => (
-            <SwiperSlide key={movie.maPhim} className="relative">
-              <div className="relative w-full h-[400px]">
-                <img
-                  src={movie.hinhAnh}
-                  alt={movie.tenPhim}
-                  className="max-w-[90%] h-full object-cover rounded-lg"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-lg"></div>
-                <div className="absolute bottom-5 left-5 text-white">
-                  <h2 className="text-3xl font-bold">{movie.tenPhim}</h2>
+          {loadingMovies ? (
+            <p className="text-center text-gray-500">Đang tải phim...</p>
+          ) : filteredMovies.length > 0 ? (
+            filteredMovies.slice(0, 10).map((movie) => (
+              <SwiperSlide key={movie.maPhim} className="relative">
+                <div className="relative w-full h-[400px]">
+                  <img
+                    src={movie.hinhAnh}
+                    alt={movie.tenPhim}
+                    className="max-w-[90%] h-full object-cover rounded-lg"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-lg"></div>
+                  <div className="absolute bottom-5 left-5 text-white">
+                    <h2 className="text-3xl font-bold">{movie.tenPhim}</h2>
+                  </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
+              </SwiperSlide>
+            ))
+          ) : (
+            <p className="text-center text-gray-500">
+              Không có phim nào để hiển thị.
+            </p>
+          )}
         </Swiper>
       </div>
 
       {/* Thanh lọc phim */}
       <div className="flex justify-center gap-5 mb-8">
-        {["all", "dangChieu", "sapChieu", "hot"].map((filter) => (
+        {filters.map(({ key, label }) => (
           <button
-            key={filter}
-            className={`px-4 py-2 rounded-lg border ${
-              selectedFilter === filter ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
+            key={key}
+            className={`px-4 py-2 rounded-lg border transition-all ${
+              selectedFilter === key
+                ? "bg-blue-500 text-white shadow-lg"
+                : "bg-gray-200 text-black hover:bg-gray-300"
             }`}
-            onClick={() => dispatch(setFilter(filter))}
+            onClick={() => dispatch(setFilter(key))}
           >
-            {filter === "all"
-              ? "🎥 Tất cả"
-              : filter === "dangChieu"
-              ? "🎬 Đang chiếu"
-              : filter === "sapChieu"
-              ? "⏳ Sắp chiếu"
-              : "🔥 Phim HOT"}
+            {label}
           </button>
         ))}
       </div>
@@ -93,43 +124,28 @@ export default function HomePage() {
       {/* Danh sách phim */}
       <h1 className="text-2xl font-bold mb-5">Danh sách phim</h1>
       <div className="grid grid-cols-4 gap-5">
-        {loadingMovies ? <p>Loading phim...</p> : filteredMovies.map((movie) => <Movie key={movie.maPhim} movie={movie} />)}
+        {loadingMovies ? (
+          <p>Đang tải phim...</p>
+        ) : filteredMovies.length > 0 ? (
+          filteredMovies.map((movie) => (
+            <Movie key={movie.maPhim} movie={movie} />
+          ))
+        ) : (
+          <p className="text-center text-gray-500">
+            Không có phim nào được tìm thấy.
+          </p>
+        )}
       </div>
 
       {/* Hệ thống rạp */}
-      <div className="container mx-auto mt-5">
-        <h1 className="text-2xl font-bold mb-5">Chọn hệ thống rạp</h1>
-        <div className="flex gap-5">
-          {cinemaSystems.map((system) => (
-            <button
-              key={system.maHeThongRap}
-              className={`px-4 py-2 rounded-lg border ${
-                selectedSystem === system.maHeThongRap ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
-              }`}
-              onClick={() => handleSelectSystem(system.maHeThongRap)}
-            >
-              {system.tenHeThongRap}
-            </button>
-          ))}
-        </div>
-
-        {selectedSystem && (
-          <div className="mt-5">
-            <h2 className="text-xl font-bold">Cụm rạp thuộc hệ thống {selectedSystem}</h2>
-            {loadingCinemas ? (
-              <p>Đang tải cụm rạp...</p>
-            ) : (
-              <ul>
-                {memoizedClusters.map((cluster) => (
-                  <li key={cluster.maCumRap} className="mt-2">
-                    {cluster.tenCumRap} - {cluster.diaChi}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-      </div>
+      <CinemaSelection
+        cinemaSystems={cinemaSystems}
+        selectedSystem={selectedSystem}
+        cinemaClusters={filteredClusters} // Chỉ hiển thị cụm rạp đã lọc
+        selectedCluster={selectedCluster}
+        showtimes={showtimes}
+        loadingCinemas={loadingCinemas}
+      />
     </div>
   );
 }
