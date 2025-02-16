@@ -1,7 +1,3 @@
-
-
 export default function AddMoviePage() {
-  return (
-    <div>AddMoviePage</div>
-  )
+  return <div>AddMoviePage</div>;
 }
