@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function Sidebar() {
   return (
-    <div className="w-64 h-screen bg-gray-800 text-white p-5">
+    <div className="w-64 h-auto bg-gray-800 text-white p-5">
       <h2 className="text-2xl font-semibold text-center mb-8">
         Admin Dashboard
       </h2>

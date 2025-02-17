@@ -15,6 +15,21 @@ export const fetchListUsers = createAsyncThunk(
   }
 );
 
+export const putUser = createAsyncThunk(
+  "listUsersPage/putUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const result = await api.put(
+        "/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
+        userData
+      );
+      return result.data.content;
+    } catch (error) {
+      return rejectWithValue(error.result?.data);
+    }
+  }
+);
+
 const initialState = {
   loading: false,
   data: null,
@@ -33,6 +48,20 @@ const listUsersPageSlice = createSlice({
       (state.loading = false), (state.data = action.payload);
     });
     builder.addCase(fetchListUsers.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+
+    // Put user
+    builder.addCase(putUser.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(putUser.fulfilled, (state, action) => {
+      state.loading = false;
+      // Cập nhật danh sách người dùng với người dùng mới được thêm
+      state.data.push(action.payload);
+    });
+    builder.addCase(putUser.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });
