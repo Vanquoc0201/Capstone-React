@@ -12,6 +12,7 @@ import PageNotFound from "../pages/PageNotFound";
 import DetaiMovie from "../pages/HomeTemplate/DetailMovie";
 import Register from "../pages/HomeTemplate/Register";
 import Login from "../pages/HomeTemplate/Login";
+import MoviesPage from "../pages/AdminTemplate/moviesPage";
 const routes = [
   {
     path: "",
@@ -58,6 +59,10 @@ const routes = [
       {
         path: "add-movie",
         element: AddMoviePage,
+      },
+      {
+        path: "moviesPage",
+        element: MoviesPage,
       },
     ],
   },

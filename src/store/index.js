@@ -6,6 +6,7 @@ import userReducer from "./../pages/HomeTemplate/Login/userSlice";
 import authReducer from "../pages/AdminTemplate/AuthPage/authSlice";
 import dashBoardReducer from "./../pages/AdminTemplate/DashboardPage/sliceDashBoard";
 import listUsersPageReducer from "./../pages/AdminTemplate/UserPage/listUserSlice";
+import listMoviesPageReducer from "./../pages/AdminTemplate/MoviesPage/moviesPageSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export const store = configureStore({
     authReducer,
     dashBoardReducer,
     listUsersPageReducer,
+    listMoviesPageReducer,
   },
 });

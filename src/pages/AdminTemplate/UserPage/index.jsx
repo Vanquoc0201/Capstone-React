@@ -23,7 +23,14 @@ export default function UserPage() {
     setIsModalOpen(false);
   };
 
-  const [editUser, setEditUser] = useState(null);
+  const [editUser, setEditUser] = useState({
+    taiKhoan: "",
+    matKhau: "",
+    email: "",
+    soDt: "",
+    maNhom: "GP01",
+    maLoaiNguoiDung: "KhachHang",
+  });
 
   const handleChangeEdit = (e) => {
     setEditUser({ ...editUser, [e.target.name]: e.target.value });
@@ -114,6 +121,7 @@ export default function UserPage() {
               <input
                 type="text"
                 defaultValue={selectedUser.hoTen}
+                name="hoTen"
                 className="border p-2 rounded mb-4 w-full"
                 onChange={handleChangeEdit}
               />
@@ -122,6 +130,7 @@ export default function UserPage() {
               <label>Email:</label>
               <input
                 type="email"
+                name="email"
                 defaultValue={selectedUser.email}
                 className="border p-2 rounded mb-4 w-full"
                 onChange={handleChangeEdit}
@@ -131,6 +140,7 @@ export default function UserPage() {
               <label>Phone number:</label>
               <input
                 type="text"
+                name="soDt"
                 defaultValue={selectedUser.soDT}
                 className="border p-2 rounded mb-4 w-full"
                 onChange={handleChangeEdit}
@@ -139,6 +149,7 @@ export default function UserPage() {
             <div>
               <label>Type User:</label>
               <select
+                name="maLoaiNguoiDung"
                 defaultValue={selectedUser.maLoaiNguoiDung}
                 className="border p-2 rounded mb-4 w-full"
                 onChange={handleChangeEdit}

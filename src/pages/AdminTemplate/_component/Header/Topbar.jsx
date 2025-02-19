@@ -16,7 +16,6 @@ const Topbar = () => {
   };
 
   const getTitle = () => {
-    console.log(location.pathname);
     switch (location.pathname) {
       case "/admin/dashboard":
         return "Dashboard";
