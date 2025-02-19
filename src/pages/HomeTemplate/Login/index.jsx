@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -14,7 +14,7 @@ export default function Login() {
   const dispatch = useDispatch();
 
     useEffect(() => {
-      const savedUser = localStorage.getItem("user");
+      const savedUser = localStorage.getItem("userInfo");
       if (savedUser) {
         dispatch(setUser(JSON.parse(savedUser)));
         navigate("/"); // Chuyển hướng nếu đã đăng nhập trước đó
@@ -40,7 +40,7 @@ const handleSubmit = async (e) => {
     dispatch(setUser(userData));
     
     // Lưu vào Local Storage
-    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("userInfo", JSON.stringify(userData));
     
     toast.success("Đăng nhập thành công", { position: "bottom-right" });
     
