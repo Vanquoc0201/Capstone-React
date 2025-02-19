@@ -53,8 +53,8 @@ const initialState = {
   cinemaClusters: [],
   showtimes: {},
   movieShowtimes: {},
-  selectedSystem: getLocalStorage("selectedSystem", null), // Đọc giá trị từ localStorage
-  selectedCluster: getLocalStorage("selectedCluster", null), // Đọc thông tin cụm rạp từ localStorage
+  selectedSystem: getLocalStorage("selectedSystem", null), 
+  selectedCluster: getLocalStorage("selectedCluster", null), 
   selectedShowtime: null,
 };
 

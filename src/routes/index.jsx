@@ -12,7 +12,8 @@ import PageNotFound from "../pages/PageNotFound";
 import DetaiMovie from "../pages/HomeTemplate/DetailMovie";
 import Register from "../pages/HomeTemplate/Register";
 import Login from "../pages/HomeTemplate/Login";
-import MoviesPage from "../pages/AdminTemplate/moviesPage";
+import MoviesPage from "../pages/AdminTemplate/MoviesPage";
+import BookingTicket from "../pages/HomeTemplate/BookingTicket";
 const routes = [
   {
     path: "",
@@ -37,6 +38,10 @@ const routes = [
       {
         path: "login",
         element: Login,
+      },
+      {
+        path: "booking/:id",
+        element: BookingTicket,
       },
     ],
   },

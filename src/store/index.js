@@ -7,12 +7,14 @@ import authReducer from "../pages/AdminTemplate/AuthPage/authSlice";
 import dashBoardReducer from "./../pages/AdminTemplate/DashboardPage/sliceDashBoard";
 import listUsersPageReducer from "./../pages/AdminTemplate/UserPage/listUserSlice";
 import listMoviesPageReducer from "./../pages/AdminTemplate/MoviesPage/moviesPageSlice";
+import bookingTicketReducer from "./../pages/HomeTemplate/BookingTicket/slice";
 
 export const store = configureStore({
   reducer: {
     listMovieReducer,
     detailMovieReducer,
     cinemaReducer,
+    bookingTicketReducer,
     user: userReducer,
     authReducer,
     dashBoardReducer,
