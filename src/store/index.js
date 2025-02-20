@@ -8,6 +8,7 @@ import dashBoardReducer from "./../pages/AdminTemplate/DashboardPage/sliceDashBo
 import listUsersPageReducer from "./../pages/AdminTemplate/UserPage/listUserSlice";
 import listMoviesPageReducer from "./../pages/AdminTemplate/MoviesPage/moviesPageSlice";
 import bookingTicketReducer from "./../pages/HomeTemplate/BookingTicket/slice";
+import editFilmReducer from "./../pages/AdminTemplate/EditFilm/editFilmSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
     dashBoardReducer,
     listUsersPageReducer,
     listMoviesPageReducer,
+    editFilmReducer,
   },
 });

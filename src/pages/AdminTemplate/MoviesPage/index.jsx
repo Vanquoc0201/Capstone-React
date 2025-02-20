@@ -44,7 +44,7 @@ function MoviesPage() {
         <td className="px-6 py-4 w-96 ">{item.moTa}</td>
         <td className="px-6 py-4">
           <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition">
-            Chỉnh sửa
+            <Link to={`/admin/edit-film/${item.maPhim}`}>Chỉnh sửa</Link>
           </button>
           <button
             className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition ml-3"

@@ -14,6 +14,7 @@ import Register from "../pages/HomeTemplate/Register";
 import Login from "../pages/HomeTemplate/Login";
 import MoviesPage from "../pages/AdminTemplate/MoviesPage";
 import BookingTicket from "../pages/HomeTemplate/BookingTicket";
+import EditFilm from "../pages/AdminTemplate/EditFilm";
 const routes = [
   {
     path: "",
@@ -68,6 +69,10 @@ const routes = [
       {
         path: "moviesPage",
         element: MoviesPage,
+      },
+      {
+        path: "edit-film/:id",
+        element: EditFilm,
       },
     ],
   },
