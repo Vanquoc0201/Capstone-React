@@ -4,7 +4,6 @@ import { fetchListUsers, putUser } from "./listUserSlice";
 
 export default function UserPage() {
   const state = useSelector((state) => state.listUsersPageReducer);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -14,30 +13,48 @@ export default function UserPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectUser] = useState(null);
 
+  // Sử dụng state editUser để làm controlled component
+  const [editUser, setEditUser] = useState({
+    taiKhoan: "",
+    matKhau: "",
+    email: "",
+    soDT: "",
+    maNhom: "GP01",
+    maLoaiNguoiDung: "KhachHang",
+    hoTen: "",
+  });
+
   const handleEdit = (user) => {
-    setIsModalOpen(true);
     setSelectUser(user);
+    setEditUser({
+      taiKhoan: user.taiKhoan,
+      matKhau: user.matKhau || "",
+      email: user.email,
+      soDT: user.soDT,
+      maNhom: user.maNhom || "GP01",
+      maLoaiNguoiDung: user.maLoaiNguoiDung,
+      hoTen: user.hoTen,
+    });
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
-  const [editUser, setEditUser] = useState({
-    taiKhoan: "",
-    matKhau: "",
-    email: "",
-    soDt: "",
-    maNhom: "GP01",
-    maLoaiNguoiDung: "KhachHang",
-  });
-
   const handleChangeEdit = (e) => {
-    setEditUser({ ...editUser, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setEditUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUpdateUser = () => {
-    dispatch(putUser(editUser));
+  const handleUpdateUser = async () => {
+    try {
+      await dispatch(putUser(editUser)).unwrap(); // Chờ API thực hiện xong
+      dispatch(fetchListUsers()); // Load lại danh sách người dùng
+      alert("Cập nhật thành công!");
+    } catch (error) {
+      alert("Lỗi khi cập nhật người dùng: " + error);
+    }
     setIsModalOpen(false);
   };
 
@@ -71,9 +88,7 @@ export default function UserPage() {
         <td className="px-6 py-4">
           <button
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            onClick={() => {
-              handleEdit(user);
-            }}
+            onClick={() => handleEdit(user)}
           >
             Edit
           </button>
@@ -81,6 +96,7 @@ export default function UserPage() {
       </tr>
     ));
   };
+
   return (
     <div className="container mx-auto">
       <div className="relative overflow-x-auto">
@@ -120,7 +136,7 @@ export default function UserPage() {
               <label>Fullname:</label>
               <input
                 type="text"
-                defaultValue={selectedUser.hoTen}
+                value={editUser.hoTen}
                 name="hoTen"
                 className="border p-2 rounded mb-4 w-full"
                 onChange={handleChangeEdit}
@@ -130,8 +146,8 @@ export default function UserPage() {
               <label>Email:</label>
               <input
                 type="email"
+                value={editUser.email}
                 name="email"
-                defaultValue={selectedUser.email}
                 className="border p-2 rounded mb-4 w-full"
                 onChange={handleChangeEdit}
               />
@@ -140,8 +156,8 @@ export default function UserPage() {
               <label>Phone number:</label>
               <input
                 type="text"
-                name="soDt"
-                defaultValue={selectedUser.soDT}
+                value={editUser.soDT}
+                name="soDT"
                 className="border p-2 rounded mb-4 w-full"
                 onChange={handleChangeEdit}
               />
@@ -150,7 +166,7 @@ export default function UserPage() {
               <label>Type User:</label>
               <select
                 name="maLoaiNguoiDung"
-                defaultValue={selectedUser.maLoaiNguoiDung}
+                value={editUser.maLoaiNguoiDung}
                 className="border p-2 rounded mb-4 w-full"
                 onChange={handleChangeEdit}
               >
@@ -161,7 +177,7 @@ export default function UserPage() {
             <div className="flex justify-end space-x-4">
               <button
                 className="px-4 py-2 bg-blue-600 text-white rounded"
-                onClick={() => handleCloseModal()}
+                onClick={handleCloseModal}
               >
                 Cancel
               </button>
@@ -173,7 +189,7 @@ export default function UserPage() {
               </button>
               <button
                 className="px-4 py-2 bg-red-600 text-white rounded"
-                onClick={() => handleCloseModal()}
+                onClick={handleCloseModal}
               >
                 Delete User
               </button>

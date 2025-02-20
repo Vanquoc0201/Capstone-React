@@ -74,7 +74,7 @@ export default function AddMoviePage() {
   };
 
   // Chức năng nút submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("tenPhim", movieData.tenPhim);
@@ -86,14 +86,20 @@ export default function AddMoviePage() {
     formData.append("danhGia", movieData.danhGia);
     formData.append("maPhim", 10);
     formData.append("hinhAnh", movieData.hinhAnh);
-    addMovie(formData);
+    try {
+      const result = await addMovie(formData);
+      if (result) alert("Thêm phim thành công");
+      window.location.reload();
+    } catch (error) {
+      alert("Lỗi khi thêm phim: " + error);
+    }
   };
   return (
     <div>
       {/* Added padding to the main container */}
       <div className="container mx-auto bg-white rounded-lg p-8 shadow-md">
         {/* Added container styling */}
-        <h1 className="text-3xl font-bold mb-4">Thêm mới phim</h1>
+        <h1 className="text-3xl font-bold mb-4">Thêm phim mới</h1>
         <div className="mb-4 flex items-center">
           <label className="mr-2">Form Size:</label>
           <button className="bg-white hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded mr-2 border">

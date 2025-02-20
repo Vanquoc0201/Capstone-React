@@ -19,7 +19,7 @@ export const putUser = createAsyncThunk(
   "listUsersPage/putUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const result = await api.put(
+      const result = await api.post(
         "/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
         userData
       );
