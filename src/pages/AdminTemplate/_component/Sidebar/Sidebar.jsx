@@ -33,12 +33,32 @@ function Sidebar() {
           </Link>
         </li>
         <li className="mb-6">
-          <Link
-            to="/admin/add-movie"
-            className="block hover:bg-gray-700 p-2 rounded"
-          >
-            Thêm phim
-          </Link>
+          <details className="group">
+            <summary className="flex items-center justify-between cursor-pointer hover:bg-gray-700 p-2 rounded">
+              Phim
+              <span className="transition-transform duration-300 group-open:rotate-180">
+                ▼
+              </span>
+            </summary>
+            <ul className="ml-4 mt-2">
+              <li className="mb-2">
+                <Link
+                  to="/admin/moviesPage"
+                  className="block hover:bg-gray-700 p-2 rounded"
+                >
+                  📜 Danh sách phim
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/admin/add-movie"
+                  className="block hover:bg-gray-700 p-2 rounded"
+                >
+                  ➕ Thêm phim
+                </Link>
+              </li>
+            </ul>
+          </details>
         </li>
       </ul>
     </div>

@@ -47,7 +47,14 @@ const initialState = {
 const authSlice = createSlice({
   name: "authSlice",
   initialState,
-  reducers: {},
+  reducers: {
+    actLogout: (state) => {
+      state.data = null;
+      state.error = null;
+      // Xóa thông tin người dùng khỏi localStorage
+      localStorage.removeItem("userInfo");
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(actLogin.pending, (state) => {
       state.loading = true;
@@ -63,4 +70,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { actLogout } = authSlice.actions;
 export default authSlice.reducer;
